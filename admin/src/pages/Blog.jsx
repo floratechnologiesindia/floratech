@@ -64,7 +64,9 @@ export default function Blog() {
     load();
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, title) {
+    const label = title ? `"${title}"` : 'this blog post';
+    if (!window.confirm(`Delete ${label} permanently? This cannot be undone.`)) return;
     await deleteItem('blog', id);
     load();
   }
@@ -278,7 +280,7 @@ export default function Blog() {
                       <button
                         type="button"
                         className="button button-secondary icon-action-btn icon-action-danger"
-                        onClick={() => handleDelete(post._id)}
+                        onClick={() => handleDelete(post._id, post.title)}
                         title="Delete blog post"
                         aria-label="Delete blog post"
                       >

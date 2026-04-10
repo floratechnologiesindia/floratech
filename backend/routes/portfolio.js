@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Portfolio from '../models/Portfolio.js';
 import { protect } from '../middleware/auth.js';
+import { fetchPortfolioDraftFromUrl } from '../services/portfolioUrlImport.js';
 
 const router = express.Router();
 
@@ -9,6 +10,23 @@ router.get('/', async (req, res) => {
   const items = await Portfolio.find({ archived: { $ne: true } }).sort({ createdAt: -1 });
   res.json(items);
 });
+
+router.post(
+  '/import-from-url',
+  protect,
+  body('url').trim().notEmpty().isString().isLength({ max: 2048 }),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    try {
+      const draft = await fetchPortfolioDraftFromUrl(req.body.url);
+      res.json(draft);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Import failed';
+      res.status(400).json({ message });
+    }
+  }
+);
 
 router.get('/:slug', async (req, res) => {
   const item = await Portfolio.findOne({ slug: req.params.slug, archived: { $ne: true } });

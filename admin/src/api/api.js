@@ -42,6 +42,15 @@ export async function updateService(id, payload) {
   return response.data;
 }
 
+export async function importPortfolioFromUrl(url) {
+  const response = await axios.post(
+    `${API_BASE}/portfolio/import-from-url`,
+    { url },
+    { headers: getAuthHeaders() }
+  );
+  return response.data;
+}
+
 export async function createPortfolio(payload) {
   const response = await axios.post(`${API_BASE}/portfolio`, payload, { headers: getAuthHeaders() });
   return response.data;
@@ -59,6 +68,21 @@ export async function createBlogPost(payload) {
 
 export async function updateBlogPost(id, payload) {
   const response = await axios.put(`${API_BASE}/blog/${id}`, payload, { headers: getAuthHeaders() });
+  return response.data;
+}
+
+export async function importMediaFromUrl(url, options = {}) {
+  const response = await axios.post(
+    `${API_BASE}/media/import-from-url`,
+    {
+      url,
+      folder: options.folder || 'portfolio',
+      maxWidth: options.maxWidth,
+      maxHeight: options.maxHeight,
+      quality: options.quality,
+    },
+    { headers: getAuthHeaders() }
+  );
   return response.data;
 }
 

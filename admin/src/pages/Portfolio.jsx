@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { fetchPortfolio, createPortfolio, updatePortfolio, archiveItem, deleteItem, toAssetUrl } from '../api/api';
+import {
+  fetchPortfolio,
+  createPortfolio,
+  updatePortfolio,
+  archiveItem,
+  deleteItem,
+  toAssetUrl,
+  importPortfolioFromUrl,
+  importMediaFromUrl,
+} from '../api/api';
 import ImageCropUpload from '../components/ImageCropUpload';
 
 const PAGE_SIZE = 5;
@@ -25,6 +34,9 @@ export default function Portfolio() {
   const [query, setQuery] = useState('');
   const [industryFilter, setIndustryFilter] = useState('all');
   const [page, setPage] = useState(1);
+  const [sourceUrl, setSourceUrl] = useState('');
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState('');
 
   useEffect(() => {
     load();
@@ -61,7 +73,9 @@ export default function Portfolio() {
     load();
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, title) {
+    const label = title ? `"${title}"` : 'this portfolio item';
+    if (!window.confirm(`Delete ${label} permanently? This cannot be undone.`)) return;
     await deleteItem('portfolio', id);
     load();
   }
@@ -87,6 +101,58 @@ export default function Portfolio() {
       });
     }
     load();
+  }
+
+  async function runImportFromUrl(url) {
+    const u = String(url || '').trim();
+    if (!u) return;
+    setSourceUrl(u);
+    setImporting(true);
+    setImportError('');
+    try {
+      const draft = await importPortfolioFromUrl(u);
+      let imageUrl = draft.imageUrl || '';
+      if (/^https?:\/\//i.test(imageUrl)) {
+        try {
+          const { url: saved } = await importMediaFromUrl(imageUrl, { folder: 'portfolio' });
+          imageUrl = saved || '';
+        } catch (imgErr) {
+          const imgMsg =
+            imgErr.response?.data?.message ||
+            (Array.isArray(imgErr.response?.data?.errors) && imgErr.response.data.errors[0]?.msg) ||
+            imgErr.message ||
+            'Image import failed';
+          setImportError(
+            `${imgMsg} Text fields were filled; upload a portfolio image manually or try Fill from URL again.`
+          );
+          imageUrl = '';
+        }
+      }
+      setForm((prev) => ({
+        ...prev,
+        title: draft.title || prev.title,
+        slug: draft.slug || prev.slug,
+        client: draft.client || prev.client,
+        industry: draft.industry || prev.industry,
+        imageUrl: imageUrl || prev.imageUrl,
+        imageAlt: draft.imageAlt || prev.imageAlt,
+        summary: draft.summary || prev.summary,
+        challenges: draft.challenges || prev.challenges,
+        solution: draft.solution || prev.solution,
+        results: draft.results || prev.results,
+        metaTitle: draft.metaTitle || prev.metaTitle,
+        metaDescription: draft.metaDescription || prev.metaDescription,
+      }));
+    } catch (err) {
+      const data = err.response?.data;
+      let msg = typeof data?.message === 'string' ? data.message : '';
+      if (!msg && Array.isArray(data?.errors) && data.errors[0]?.msg) {
+        msg = data.errors[0].msg;
+      }
+      setImportError(msg || err.message || 'Could not import from URL');
+    } finally {
+      setImporting(false);
+    }
   }
 
   function handleEdit(item) {
@@ -139,6 +205,39 @@ export default function Portfolio() {
       </div>
       <form className="admin-form glass-card" onSubmit={handleSubmit}>
         <h2>{editingId ? 'Edit portfolio item' : 'Add portfolio item'}</h2>
+        <div className="portfolio-url-import-block">
+          <label className="portfolio-url-import-label">
+            <span className="portfolio-url-import-title">Import from live site URL</span>
+            <span className="portfolio-url-import-hint">
+              Paste a public <code>https://</code> page. We read Open Graph / meta tags and main text to draft fields
+              (you can edit before saving). Admin only.
+            </span>
+            <div className="portfolio-import-controls">
+              <input
+                type="url"
+                inputMode="url"
+                placeholder="https://example.com"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                onPaste={(e) => {
+                  const text = e.clipboardData?.getData('text')?.trim();
+                  if (!text || !/^https?:\/\//i.test(text)) return;
+                  setTimeout(() => runImportFromUrl(text), 0);
+                }}
+                disabled={importing}
+              />
+              <button
+                type="button"
+                className="button button-secondary"
+                disabled={importing || !sourceUrl.trim()}
+                onClick={() => runImportFromUrl(sourceUrl)}
+              >
+                {importing ? 'Fetching…' : 'Fill from URL'}
+              </button>
+            </div>
+          </label>
+          {importError ? <p className="portfolio-import-error">{importError}</p> : null}
+        </div>
         <div className="form-grid">
           <label>Title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></label>
           <label>Slug<input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} required /></label>
@@ -285,7 +384,7 @@ export default function Portfolio() {
                       <button
                         type="button"
                         className="button button-secondary icon-action-btn icon-action-danger"
-                        onClick={() => handleDelete(item._id)}
+                        onClick={() => handleDelete(item._id, item.title)}
                         title="Delete portfolio item"
                         aria-label="Delete portfolio item"
                       >

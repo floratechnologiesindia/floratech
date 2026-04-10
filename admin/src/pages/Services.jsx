@@ -58,7 +58,9 @@ export default function Services() {
     load();
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, title) {
+    const label = title ? `"${title}"` : 'this service';
+    if (!window.confirm(`Delete ${label} permanently? This cannot be undone.`)) return;
     await deleteItem('services', id);
     load();
   }
@@ -271,7 +273,7 @@ export default function Services() {
                       <button
                         type="button"
                         className="button button-secondary icon-action-btn icon-action-danger"
-                        onClick={() => handleDelete(service._id)}
+                        onClick={() => handleDelete(service._id, service.title)}
                         title="Delete service"
                         aria-label="Delete service"
                       >

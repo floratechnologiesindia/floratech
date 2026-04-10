@@ -177,6 +177,60 @@ select {
   font-style: normal;
 }
 
+.portfolio-url-import-block {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(28, 139, 79, 0.18);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.portfolio-url-import-label {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.portfolio-url-import-title {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.portfolio-url-import-hint {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.portfolio-url-import-hint code {
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+  background: rgba(28, 139, 79, 0.1);
+}
+
+.portfolio-import-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.portfolio-import-controls input {
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid rgba(28, 139, 79, 0.16);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  font: inherit;
+}
+
+.portfolio-import-error {
+  margin: 0.65rem 0 0;
+  font-size: 0.9rem;
+  color: #b42318;
+}
+
 .form-grid {
   display: grid;
   gap: 1rem;

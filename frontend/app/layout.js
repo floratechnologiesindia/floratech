@@ -21,8 +21,8 @@ const structuredData = {
   image: `${siteUrl}/flora-logo.svg`,
   description:
     'Naturally Intelligent digital solutions for MSMEs, startups, and researchers—websites, e-commerce, AI, blockchain, and digital marketing.',
-  telephone: '+919876543210',
-  email: 'hello@floratechnologies.in',
+  telephone: '+919342524607',
+  email: 'floratechnologiesindia@gmail.com',
   address: {
     '@type': 'PostalAddress',
     addressCountry: 'IN',

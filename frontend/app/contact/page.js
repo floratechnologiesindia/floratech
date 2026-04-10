@@ -53,16 +53,25 @@ export default function ContactPage() {
           />
           <h2>Instant support</h2>
           <p>Connect with Flora Technologies on WhatsApp for a quick digital consultation.</p>
-          <Link href="https://wa.me/919876543210" className="button button-secondary" target="_blank">
+          <Link
+            href="https://wa.me/919342524607"
+            className="button button-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Chat on WhatsApp
           </Link>
           <div className="info-group">
             <strong>Email</strong>
-            <p>hello@floratechnologies.in</p>
+            <p>
+              <Link href="mailto:floratechnologiesindia@gmail.com">floratechnologiesindia@gmail.com</Link>
+            </p>
           </div>
           <div className="info-group">
             <strong>Phone</strong>
-            <p>+91 98765 43210</p>
+            <p>
+              <Link href="tel:+919342524607">+91 93425 24607</Link>
+            </p>
           </div>
         </div>
       </div>

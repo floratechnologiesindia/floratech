@@ -50,6 +50,11 @@ export const metadata = {
     'digital marketing India',
   ],
   applicationName: 'Flora Technologies',
+  icons: {
+    icon: [{ url: '/flora-logo-only.svg', type: 'image/svg+xml' }],
+    shortcut: [{ url: '/flora-logo-only.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/flora-logo-only.svg', type: 'image/svg+xml' }],
+  },
   authors: [{ name: 'Flora Technologies', url: siteUrl }],
   creator: 'Flora Technologies',
   publisher: 'Flora Technologies',
@@ -139,8 +144,10 @@ export default function RootLayout({ children }) {
             </div>
           </div>
         </footer>
-        <StickyCta />
-        <ChatbotDemo />
+        <div className="bottom-actions-fab">
+          <ChatbotDemo />
+          <StickyCta />
+        </div>
         <AutoReveal />
       </body>
     </html>

@@ -11,7 +11,7 @@ export default function manifest() {
     lang: 'en',
     icons: [
       {
-        src: '/flora-logo.svg',
+        src: '/flora-logo-only.svg',
         sizes: 'any',
         type: 'image/svg+xml',
         purpose: 'any',

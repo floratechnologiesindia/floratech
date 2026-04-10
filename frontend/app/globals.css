@@ -72,6 +72,11 @@ main,
   z-index: 1;
 }
 
+/* Desktop / tablet: wrapper is transparent; children keep their own fixed positioning */
+.bottom-actions-fab {
+  display: contents;
+}
+
 .route-transition {
   animation: page-enter 620ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform, filter;
@@ -106,7 +111,7 @@ main,
 .page-shell {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 2.25rem;
 }
 
 .layout-wrapper {
@@ -695,7 +700,7 @@ main,
 
 .site-footer {
   padding: 2rem 0;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   color: var(--muted);
 }
 
@@ -787,7 +792,8 @@ main,
   }
 
   .page-shell {
-    padding-bottom: 8.5rem;
+    /* Room above fixed chat / sticky CTA without a large dead zone before the footer */
+    padding-bottom: 3.25rem;
   }
 
   .header-inner {
@@ -1330,6 +1336,10 @@ main,
     grid-template-columns: 1fr;
   }
 
+}
+
+/* Tablet: clear the right-column sticky CTAs (641px–900px only; mobile uses stacked .bottom-actions-fab) */
+@media (max-width: 900px) and (min-width: 641px) {
   .chatbot-demo {
     bottom: 7.25rem;
   }
@@ -1337,17 +1347,51 @@ main,
 
 @media (max-width: 640px) {
   .site-footer {
-    margin-bottom: 7.5rem;
+    /* Scroll padding so footer clears fixed bottom UI; keep modest */
+    margin-bottom: 5.5rem;
   }
 
   .footer-links {
     display: none;
   }
 
-  .chatbot-demo {
+  /* Stack: Demo chat on top, then Free consultation + Start project row */
+  .bottom-actions-fab {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    position: fixed;
     left: 0.75rem;
     right: 0.75rem;
-    bottom: 7.75rem;
+    bottom: 0.75rem;
+    z-index: 70;
+    pointer-events: none;
+  }
+
+  .bottom-actions-fab > * {
+    pointer-events: auto;
+  }
+
+  .bottom-actions-fab .chatbot-demo {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .bottom-actions-fab .sticky-cta {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: 1;
+  }
+
+  .bottom-actions-fab .chatbot-fab {
+    width: 100%;
   }
 
   .chatbot-panel {

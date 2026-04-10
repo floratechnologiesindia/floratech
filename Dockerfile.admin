@@ -1,0 +1,11 @@
+FROM node:20-alpine AS base
+WORKDIR /app
+ARG VITE_API_URL=https://api.floratechnologies.in/api
+ENV VITE_API_URL=$VITE_API_URL
+COPY admin/package.json admin/package-lock.json* ./
+RUN npm install --legacy-peer-deps
+COPY admin .
+RUN npm run build
+
+EXPOSE 4174
+CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0", "--port", "4174"]

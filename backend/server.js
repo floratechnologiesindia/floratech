@@ -49,6 +49,7 @@ const devOrigins = [
 const productionOrigins = [
   'https://www.floratechnologies.in',
   'https://floratechnologies.in',
+  'https://admin.floratechnologies.in',
 ];
 const defaultOrigins = process.env.NODE_ENV === 'production' ? productionOrigins : devOrigins;
 const corsOrigins = process.env.CORS_ORIGINS

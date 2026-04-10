@@ -5,5 +5,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5174,
-  }
+  },
+  preview: {
+    allowedHosts: [
+      'admin.floratechnologies.in',
+      'localhost',
+      '127.0.0.1',
+    ],
+  },
 });

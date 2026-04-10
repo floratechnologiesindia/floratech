@@ -10,10 +10,10 @@ A complete production-ready website and admin system for Flora Technologies.
 | **Command** | `docker compose up --build` | `docker compose -f docker-compose.prod.yml up --build -d` |
 | **Frontend URL** | `http://localhost:3000` | Host `http://127.0.0.1:5050` → nginx → `https://www.floratechnologies.in` |
 | **API URL** | `http://localhost:4000` | Host `http://127.0.0.1:5000` → nginx → `https://api.floratechnologies.in` |
-| **Admin** | Vite dev `http://localhost:5174` | Built app `http://127.0.0.1:4174` (optional; restrict in prod) |
+| **Admin** | Vite dev `http://localhost:5174` | `https://admin.floratechnologies.in` → nginx → `127.0.0.1:4174` |
 | **NODE_ENV** | `development` | `production` |
 | **Source mounts** | Yes (`./backend`, `./frontend`, `./admin` → hot reload) | No (image-only) |
-| **Backend CORS** | Localhost origins (see `docker-compose.yml`) | Public site origins (default in `docker-compose.prod.yml`) |
+| **Backend CORS** | Localhost origins (see `docker-compose.yml`) | Site + **admin** origin (default in `docker-compose.prod.yml` includes `https://admin.floratechnologies.in`) |
 | **Trust proxy** | Off | `TRUST_PROXY=1` (behind nginx) |
 | **Env templates** | Defaults in each `*/.env.example` **Development** section | **Production** sections + root `.env` overrides |
 
@@ -94,10 +94,11 @@ Production layout matches **`nginx.conf.example`** on the server:
 |------------|-------------------|----------------------|
 | `https://www.floratechnologies.in` | `127.0.0.1:5050` | `frontend` `5050:3000` |
 | `https://api.floratechnologies.in` | `127.0.0.1:5000` | `backend` `5000:4000` |
+| `https://admin.floratechnologies.in` | `127.0.0.1:4174` | `admin` `4174:4174` |
 
-- **Backend:** Set `MONGODB_URI`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `PORT=4000` (inside container), `TRUST_PROXY=1` behind nginx, and `CORS_ORIGINS` with your live site origins (`https://www.floratechnologies.in`, `https://floratechnologies.in`, plus any admin origin). Run `npm run seed` once.
+- **Backend:** Set `MONGODB_URI`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `PORT=4000` (inside container), `TRUST_PROXY=1` behind nginx, and `CORS_ORIGINS` including the public site and **`https://admin.floratechnologies.in`** (default in `docker-compose.prod.yml`). Run `npm run seed` once.
 - **Frontend:** `API_URL=http://backend:4000` (or internal URL), `NEXT_PUBLIC_API_URL=https://api.floratechnologies.in`, `NEXT_PUBLIC_SITE_URL=https://www.floratechnologies.in`.
-- **Admin:** Build with `VITE_API_URL=https://api.floratechnologies.in/api` (see `admin/.env.example` and `docker-compose.prod.yml` build args).
+- **Admin:** Build with `VITE_API_URL=https://api.floratechnologies.in/api` (see `admin/.env.example` and `docker-compose.prod.yml` build args). Serve at **`https://admin.floratechnologies.in`** via nginx (`nginx.conf.example`). Point DNS **admin** to the server and add the hostname to your TLS certificate.
 - **Database:** MongoDB Atlas or self-hosted MongoDB.
 
 The public site loads **services, portfolio, and blog** from the API with a 60s revalidate; if the API is unreachable at build or request time, it falls back to `frontend/lib/siteData.js`. Re-seed after changing sample data so MongoDB stays aligned.
@@ -124,7 +125,7 @@ docker compose -f docker-compose.prod.yml up --build -d
 
 - Frontend (nginx upstream): `http://127.0.0.1:5050`
 - API (nginx upstream): `http://127.0.0.1:5000` — routes are under `/api/...`
-- Admin (optional): `http://127.0.0.1:4174`
+- Admin (public): `https://admin.floratechnologies.in` → `http://127.0.0.1:4174`
 
 ## Notes
 

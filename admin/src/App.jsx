@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
@@ -8,7 +9,7 @@ import Leads from './pages/Leads';
 import AdminLayout from './components/AdminLayout';
 
 function App() {
-  const token = localStorage.getItem('flora_admin_token');
+  const { token } = useAuth();
 
   return (
     <Routes>

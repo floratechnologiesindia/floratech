@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import { loginAdmin } from '../api/api';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,8 +14,12 @@ export default function Login() {
     event.preventDefault();
     try {
       const data = await loginAdmin({ email, password });
-      localStorage.setItem('flora_admin_token', data.token);
-      navigate('/');
+      if (!data?.token) {
+        setError('Invalid response from server');
+        return;
+      }
+      login(data.token);
+      navigate('/', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }

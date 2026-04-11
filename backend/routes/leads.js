@@ -3,6 +3,7 @@ import rateLimit from 'express-rate-limit';
 import { body, validationResult } from 'express-validator';
 import Lead from '../models/Lead.js';
 import { protect } from '../middleware/auth.js';
+import { sendNewLeadEmail } from '../services/notifyLeadEmail.js';
 
 const router = express.Router();
 
@@ -30,6 +31,7 @@ router.post('/',
 
     const lead = new Lead(req.body);
     await lead.save();
+    void sendNewLeadEmail(lead);
     res.status(201).json({ message: 'Lead captured', lead });
   }
 );

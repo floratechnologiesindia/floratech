@@ -63,6 +63,25 @@ select {
   transition: background 0.2s ease;
 }
 
+.admin-nav a.admin-nav-leads {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.nav-badge {
+  min-width: 1.35rem;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+}
+
 .admin-nav a.active,
 .admin-nav a:hover {
   background: rgba(28, 139, 79, 0.12);

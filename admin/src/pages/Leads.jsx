@@ -15,7 +15,8 @@ export default function Leads() {
 
   async function handleDelete(id) {
     await deleteItem('leads', id);
-    load();
+    await load();
+    window.dispatchEvent(new Event('flora-leads-changed'));
   }
 
   return (

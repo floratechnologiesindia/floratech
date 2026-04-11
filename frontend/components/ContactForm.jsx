@@ -59,7 +59,14 @@ export default function ContactForm() {
       form.reset();
     } catch (err) {
       setStatus('error');
-      setMessage(err.message || 'Could not send. Please try WhatsApp or email.');
+      const isNetwork =
+        err instanceof TypeError ||
+        (typeof err?.message === 'string' && err.message.toLowerCase().includes('fetch'));
+      setMessage(
+        isNetwork
+          ? 'Could not reach the server. Check your connection and that the site is configured with the correct API URL (rebuild frontend with NEXT_PUBLIC_API_URL). Or use WhatsApp or email.'
+          : err.message || 'Could not send. Please try WhatsApp or email.'
+      );
     }
   }
 
